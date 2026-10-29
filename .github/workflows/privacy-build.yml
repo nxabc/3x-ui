@@ -50,7 +50,7 @@ jobs:
         run: |
           mkdir -p package
           go build -trimpath -ldflags "-linkmode external -extldflags '-static'" -o package/x-ui .
-          cp PRIVACY.md package/
+          cp PRIVACY.md LICENSE x-ui.sh package/
           printf '%s\n' "$GITHUB_SHA" > package/SOURCE_COMMIT
           file package/x-ui | tee package/DEPENDENCIES.txt
           file package/x-ui | grep 'statically linked'

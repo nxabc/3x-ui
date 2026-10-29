@@ -62,7 +62,10 @@ against all possible transports. The above packet/browser capture is required.
 ## Production change and rollback plan (NOT executed)
 
 This artifact upgrades an existing compatible installation; it omits Xray,
-sidecars, geodata, service files and the existing CLI. It is not a fresh installer.
+sidecars, geodata and service files. It includes the hardened `x-ui.sh` CLI;
+replace the installed `/usr/bin/x-ui` with this script during the approved
+upgrade as well, otherwise the old CLI could still invoke the official updater.
+It is not a fresh installer.
 
 Before any deployment, record panel/Xray versions, binary hashes, service unit
 and drop-ins (`systemctl cat x-ui`), environment paths and database type. Locate
@@ -75,7 +78,8 @@ Store encrypted backups off the server. Verify the backup can be restored.
 After explicit owner approval and a maintenance window: verify the downloaded
 artifact's hash against an authenticated trusted release record, inspect its
 contents and static-link metadata, stop the service, take a final consistent backup, preserve
-the old binary, replace only the panel binary with owner/mode preserved, start
+the old binary and CLI, replace the panel binary and `/usr/bin/x-ui` with the
+included hardened CLI (preserving owner and executable permissions), start
 and run smoke checks. Do not overwrite certificates, environment, DB or bin/.
 No new database migration is introduced by these patches; future upstream
 updates may migrate schema and must be tested on a copy first.
