@@ -27,8 +27,8 @@ Xray's independent official update path is unchanged.
 
 `privacy-build.yml` tests and builds a **panel-only upgrade artifact** on Ubuntu
 24.04 AMD64. It uploads Actions artifacts and cannot publish releases or deploy.
-The dynamically linked binary targets Ubuntu 24.04 and Debian with compatible
-glibc (verify `ldd` on the destination); older distributions are NOT certified.
+The AMD64 binary is statically linked with musl to avoid host glibc version
+dependence. Actual target OS smoke testing is still required.
 The existing full release and Docker workflows now require manual dispatch;
 do not dispatch them until their release packaging has been reviewed and the
 privacy build has passed. A release must be explicitly reviewed and published
@@ -74,7 +74,7 @@ Store encrypted backups off the server. Verify the backup can be restored.
 
 After explicit owner approval and a maintenance window: verify the downloaded
 artifact's hash against an authenticated trusted release record, inspect its
-contents and `ldd`, stop the service, take a final consistent backup, preserve
+contents and static-link metadata, stop the service, take a final consistent backup, preserve
 the old binary, replace only the panel binary with owner/mode preserved, start
 and run smoke checks. Do not overwrite certificates, environment, DB or bin/.
 No new database migration is introduced by these patches; future upstream

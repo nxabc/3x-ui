@@ -34,17 +34,26 @@ jobs:
           go list ./... | grep -v '/frontend/node_modules/' > /tmp/packages.txt
           go test -shuffle=on -count=1 $(cat /tmp/packages.txt)
           go test -race -count=1 ./internal/web/service/panel -run TestPrivacy
+      - name: Sponsor runtime HTTP tests with external networking removed
+        run: |
+          go test -c -o /tmp/privacy-panel.test ./internal/web/service/panel
+          go test -c -o /tmp/privacy-controller.test ./internal/web/controller
+          sudo unshare --net sh -ec 'ip link set lo up; /tmp/privacy-panel.test -test.run TestPrivacy -test.v; /tmp/privacy-controller.test -test.run TestPrivacySponsorHTTP -test.v'
+      - name: Install static Linux compiler
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
       - name: Build panel-only upgrade artifact
         env:
           CGO_ENABLED: '1'
           GOOS: linux
           GOARCH: amd64
+          CC: musl-gcc
         run: |
           mkdir -p package
-          go build -trimpath -o package/x-ui .
+          go build -trimpath -ldflags "-linkmode external -extldflags '-static'" -o package/x-ui .
           cp PRIVACY.md package/
           printf '%s\n' "$GITHUB_SHA" > package/SOURCE_COMMIT
-          ldd package/x-ui > package/DEPENDENCIES.txt
+          file package/x-ui | tee package/DEPENDENCIES.txt
+          file package/x-ui | grep 'statically linked'
           tar -czf privacy-panel-linux-amd64.tar.gz -C package .
           sha256sum privacy-panel-linux-amd64.tar.gz > privacy-panel-linux-amd64.tar.gz.sha256
       - uses: actions/upload-artifact@v7
