@@ -71,39 +71,15 @@
 
 </details>
 
-## 快速开始
+## 个人版安装与升级
 
-```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
-```
+**[打开图文安装说明 →](docs/安装说明.md)**
 
-若要安装特定版本，请在命令后附加对应的标签（例如 `v3.7.0`）：
+本仓库是 **3X-UI 个人版 v3.11.0**，非官方个人维护分支。商业广告已禁用，面板更新渠道独立，Xray 核心更新保持原样。
 
-```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v3.7.0
-```
+当前发布的是 **Linux AMD64 升级包**，需要已有官方 v3.11.0 环境。下载、校验、备份和图文步骤请按安装说明操作；请勿执行上游一键命令，否则装到的是官方版本。
 
-若要安装滚动更新的 **dev** 版本（来自 `main` 的最新逐次提交预发布版本，而非稳定版本），请传入 `dev-latest`：
-
-```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) dev-latest
-```
-
-安装过程中会生成随机的用户名、密码和访问路径。安装完成后，运行 `x-ui` 打开管理菜单，您可以在其中启动/停止服务、查看或重置登录凭据、管理 SSL 证书等。
-
-每个发布资源都会在其旁边附带一个 `.sha256` 校验和。`install.sh` 和更新程序都会据此校验压缩包，不匹配时中止。
-
-完整文档（安装、配置、运维以及完整的 API 参考）请访问 **[docs.sanaei.dev](https://docs.sanaei.dev/zh)**。
-
-### 无人值守安装
-
-安装程序也可以**非交互式**运行，适用于 cloud-init。
-设置 `XUI_NONINTERACTIVE=1`（或在无 TTY 的情况下通过管道传入），它就会全程
-零提示地完成端到端安装，生成随机凭据并写入
-`/etc/x-ui/install-result.env`。请参阅 [`deploy/`](deploy/)：
-
-- [Cloud-init user-data](deploy/cloud-init/) — 在任意云平台上无人值守安装（Hetzner/AWS/DO/Vultr/GCP/Azure/Oracle）
-- [Hetzner Cloud 说明](deploy/marketplace/hetzner/) — 在 Hetzner 上基于 cloud-init 的部署
+[下载个人版 v3.11.0](https://github.com/nxabc/3x-ui/releases/tag/v3.11.0) · [备份与回滚](PRIVACY.md)
 
 ## 支持的平台
 

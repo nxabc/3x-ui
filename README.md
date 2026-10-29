@@ -71,39 +71,15 @@ Built as an enhanced fork of the original X-UI project, 3X-UI adds broader proto
 
 </details>
 
-## Quick Start
+## Personal Edition installation
 
-```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
-```
+**[Open the illustrated installation guide (Chinese) →](docs/安装说明.md)**
 
-To install a specific version, append its tag (e.g. `v3.7.0`):
+This is the unofficial **3X-UI Personal Edition v3.11.0** fork. Commercial ads are disabled and panel updates use this repository. Xray-core updates remain independent.
 
-```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v3.7.0
-```
+The current Linux AMD64 release is an **upgrade package for an existing official v3.11.0 installation**, not a fresh installer. Follow the guide for downloads, checksums and backups. Upstream installer commands install the upstream edition.
 
-To install the rolling **dev** build (latest per-commit pre-release from `main`, not a stable release), pass `dev-latest`:
-
-```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) dev-latest
-```
-
-During installation a random username, password, and access path are generated. After installation, run `x-ui` to open the management menu, where you can start/stop the service, view or reset your login credentials, manage SSL certificates, and more.
-
-Every release asset is published with a `.sha256` sum next to it. Both `install.sh` and the updater verify the archive against that sum and abort on a mismatch.
-
-For full documentation — installation, configuration, operations, and the complete API reference — visit **[docs.sanaei.dev](https://docs.sanaei.dev)**.
-
-### Unattended install
-
-The installer also runs **non-interactively** for cloud-init.
-Set `XUI_NONINTERACTIVE=1` (or pipe with no TTY) and it installs end-to-end with
-zero prompts, generating random credentials and writing them to
-`/etc/x-ui/install-result.env`. See [`deploy/`](deploy/) for:
-
-- [Cloud-init user-data](deploy/cloud-init/) — unattended install on any cloud (Hetzner/AWS/DO/Vultr/GCP/Azure/Oracle)
-- [Hetzner Cloud notes](deploy/marketplace/hetzner/) — cloud-init deployment on Hetzner
+[Download v3.11.0](https://github.com/nxabc/3x-ui/releases/tag/v3.11.0) · [Backup and rollback](PRIVACY.md)
 
 ## Supported Platforms
 
