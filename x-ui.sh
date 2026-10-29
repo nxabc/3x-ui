@@ -129,7 +129,9 @@ before_show_menu() {
 }
 
 install() {
-    bash <(curl -Ls https://raw.githubusercontent.com/MHSanaei/3x-ui/main/install.sh)
+    echo "Privacy Edition: use verified manual panel packages; see PRIVACY.md" >&2
+    return 1
+    bash <(curl -Ls https://raw.githubusercontent.com/nxabc/3x-ui/main/install.sh)
     if [[ $? == 0 ]]; then
         if [[ $# == 0 ]]; then
             start
@@ -140,6 +142,8 @@ install() {
 }
 
 update() {
+    echo "Privacy Edition: use verified manual panel packages; see PRIVACY.md" >&2
+    return 1
     confirm "This function will update all x-ui components to the latest version, and the data will not be lost. Do you want to continue?" "y"
     if [[ $? != 0 ]]; then
         LOGE "Cancelled"
@@ -148,7 +152,7 @@ update() {
         fi
         return 0
     fi
-    bash <(curl -Ls https://raw.githubusercontent.com/MHSanaei/3x-ui/main/update.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/nxabc/3x-ui/main/update.sh)
     if [[ $? == 0 ]]; then
         LOGI "Update is complete, Panel has automatically restarted "
         before_show_menu
@@ -156,6 +160,8 @@ update() {
 }
 
 update_dev() {
+    echo "Privacy Edition: use verified manual panel packages; see PRIVACY.md" >&2
+    return 1
     confirm "This will update x-ui to the latest DEV commit (the rolling 'dev-latest' build, not a stable release). Your data is preserved. Continue?" "y"
     if [[ $? != 0 ]]; then
         LOGE "Cancelled"
@@ -166,7 +172,7 @@ update_dev() {
     fi
     # XUI_UPDATE_TAG tells update.sh to install the dev-latest pre-release
     # instead of the latest stable tag.
-    XUI_UPDATE_TAG="dev-latest" bash <(curl -Ls https://raw.githubusercontent.com/MHSanaei/3x-ui/main/update.sh)
+    XUI_UPDATE_TAG="dev-latest" bash <(curl -Ls https://raw.githubusercontent.com/nxabc/3x-ui/main/update.sh)
     if [[ $? == 0 ]]; then
         LOGI "Dev update is complete, Panel has automatically restarted "
         before_show_menu
@@ -174,6 +180,8 @@ update_dev() {
 }
 
 replace_xui_script() {
+    echo "Privacy Edition: manual verified panel packages only; see PRIVACY.md" >&2
+    return 1
     local url="$1"
     local use_if_modified_since="$2"
     local temp_file="/usr/bin/x-ui-temp.$$"
@@ -213,15 +221,17 @@ replace_xui_script() {
 installed_script_url() {
     local ver
     ver=$("${xui_folder}/x-ui" -v 2> /dev/null | tr -d '[:space:]')
-    if [[ "$ver" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && curl -fsIL -o /dev/null "https://raw.githubusercontent.com/MHSanaei/3x-ui/v${ver}/x-ui.sh"; then
-        echo "https://raw.githubusercontent.com/MHSanaei/3x-ui/v${ver}/x-ui.sh"
+    if [[ "$ver" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && curl -fsIL -o /dev/null "https://raw.githubusercontent.com/nxabc/3x-ui/v${ver}/x-ui.sh"; then
+        echo "https://raw.githubusercontent.com/nxabc/3x-ui/v${ver}/x-ui.sh"
     else
         echo -e "${yellow}No x-ui.sh published for the installed version (${ver:-unknown}), using main${plain}" >&2
-        echo "https://raw.githubusercontent.com/MHSanaei/3x-ui/main/x-ui.sh"
+        echo "https://raw.githubusercontent.com/nxabc/3x-ui/main/x-ui.sh"
     fi
 }
 
 update_menu() {
+    echo "Privacy Edition: manual verified panel packages only; see PRIVACY.md" >&2
+    return 1
     echo -e "${yellow}Updating Menu${plain}"
     confirm "This function will update the menu to the latest changes." "y"
     if [[ $? != 0 ]]; then
@@ -243,6 +253,8 @@ update_menu() {
 }
 
 legacy_version() {
+    echo "Privacy Edition: manual verified panel packages only; see PRIVACY.md" >&2
+    return 1
     echo -n "Enter the panel version (like 2.4.0):"
     read -r tag_version
 
@@ -251,7 +263,7 @@ legacy_version() {
         exit 1
     fi
     # Use the entered panel version in the download link
-    install_command="bash <(curl -Ls "https://raw.githubusercontent.com/mhsanaei/3x-ui/v$tag_version/install.sh") v$tag_version"
+    install_command="bash <(curl -Ls "https://raw.githubusercontent.com/nxabc/3x-ui/v$tag_version/install.sh") v$tag_version"
 
     echo "Downloading and installing panel version $tag_version..."
     eval $install_command
@@ -322,7 +334,7 @@ uninstall() {
     echo ""
     echo -e "Uninstalled Successfully.\n"
     echo "If you need to install this panel again, you can use below command:"
-    echo -e "${green}bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)${plain}"
+    echo -e "${green}bash <(curl -Ls https://raw.githubusercontent.com/nxabc/3x-ui/master/install.sh)${plain}"
     echo ""
     # Trap the SIGTERM signal
     trap delete_script SIGTERM

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Privacy Edition: automatic installers are disabled; see PRIVACY.md.
+printf "%s\n" "Install only a verified Privacy Edition package manually; see PRIVACY.md." >&2
+exit 1
+
+
 red='\033[0;31m'
 green='\033[0;32m'
 blue='\033[0;34m'

@@ -1,0 +1,56 @@
+name: Privacy Edition build and test
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [privacy-edition]
+permissions:
+  contents: read
+jobs:
+  linux-amd64:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Privacy static guards
+        run: node scripts/privacy/check.mjs
+      - name: Frontend validation and build
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run typecheck
+          npm test -- --project unit --project components
+          npm run build
+      - name: Go formatting and tests
+        run: |
+          gofmt -w internal/web/service/panel/sponsor.go internal/web/service/panel/sponsor_test.go
+          go list ./... | grep -v '/frontend/node_modules/' > /tmp/packages.txt
+          go test -shuffle=on -count=1 $(cat /tmp/packages.txt)
+          go test -race -count=1 ./internal/web/service/panel -run TestPrivacy
+      - name: Build panel-only upgrade artifact
+        env:
+          CGO_ENABLED: '1'
+          GOOS: linux
+          GOARCH: amd64
+        run: |
+          mkdir -p package
+          go build -trimpath -o package/x-ui .
+          cp PRIVACY.md package/
+          printf '%s\n' "$GITHUB_SHA" > package/SOURCE_COMMIT
+          ldd package/x-ui > package/DEPENDENCIES.txt
+          tar -czf privacy-panel-linux-amd64.tar.gz -C package .
+          sha256sum privacy-panel-linux-amd64.tar.gz > privacy-panel-linux-amd64.tar.gz.sha256
+      - uses: actions/upload-artifact@v7
+        with:
+          name: privacy-panel-linux-amd64
+          path: |
+            privacy-panel-linux-amd64.tar.gz
+            privacy-panel-linux-amd64.tar.gz.sha256
+          if-no-files-found: error

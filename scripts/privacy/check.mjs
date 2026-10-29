@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read = p => fs.readFileSync(p, 'utf8');
+const sponsor = read('internal/web/service/panel/sponsor.go');
+assert(!/net\/http|fetchLimited|readSponsorSource|https?:\/\//.test(sponsor.replace(/example:"[^"]*"/g, '')));
+for (const p of ['frontend/src/pages/login/LoginPage.tsx', 'frontend/src/pages/index/IndexPage.tsx']) assert(!read(p).includes('SponsorSlot'), p);
+assert(!/HttpUtil|useQuery|fetch\(/.test(read('frontend/src/api/queries/useSponsorsQuery.ts')));
+assert(!/SponsorCard|useSponsorsQuery|<img/.test(read('frontend/src/pages/sponsors/SponsorsPage.tsx')));
+assert(read('frontend/src/routes/panelRoutes.tsx').includes("path: '/sponsors'"));
+assert(!read('internal/web/service/panel/panel.go').includes('repos/MHSanaei/3x-ui'));
+console.log('Privacy static guards passed (runtime verification is still required).');
