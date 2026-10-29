@@ -2499,9 +2499,7 @@
       "intro": "Empresas que apoyan el desarrollo de 3X-UI. Los enlaces patrocinados se abren en una pestaña nueva.",
       "become": "Hazte patrocinador",
       "tag": "Patrocinador",
-      "visit": "Visitar",
-      "yourBrand": "Tu marca aquí",
-      "yourBrandText": "Muestra tu empresa a miles de administradores de servidores que abren 3X-UI cada día."
+      "visit": "Visitar"
     }
   },
   "tgbot": {
