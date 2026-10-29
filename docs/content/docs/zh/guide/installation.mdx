@@ -31,12 +31,12 @@ icon: Download
 
 ## 01 · 更新系统
 
-在新装的测试系统中运行；已有业务的机器请先备份并安排维护时间。
+以下系统命令以 **root** 执行；普通用户先运行 `sudo -i`。在新装的测试系统中操作，已有业务的机器请先备份并安排维护时间。
 
 ```bash
-sudo apt update
-sudo apt upgrade -y
-sudo apt install -y curl ca-certificates
+apt update
+apt upgrade -y
+apt install -y curl ca-certificates
 ```
 
 ## 02 · 安装 3X-UI 个人版
@@ -48,7 +48,7 @@ bash <(curl -fsSL https://github.com/nxabc/3x-ui/releases/download/v3.11.0/insta
 ```
 
 > [!NOTE]
-> 请先以 root 登录，或先运行 `sudo -i` 再执行上面的命令。非 root 用户建议使用下面的下载校验方式。
+> 请先以 root 登录，或先运行 `sudo -i` 再执行上面的命令。执行安装时始终需要 root 权限。
 
 ### 推荐：下载并校验脚本后安装
 
@@ -56,7 +56,7 @@ bash <(curl -fsSL https://github.com/nxabc/3x-ui/releases/download/v3.11.0/insta
 mkdir -p ~/3x-ui-personal && cd ~/3x-ui-personal
 curl -fLO https://github.com/nxabc/3x-ui/releases/download/v3.11.0/install.sh
 curl -fLO https://github.com/nxabc/3x-ui/releases/download/v3.11.0/install.sh.sha256
-sha256sum -c install.sh.sha256 && sudo bash install.sh v3.11.0
+sha256sum -c install.sh.sha256 && bash install.sh v3.11.0
 ```
 
 安装程序会再次核对完整发布包的 SHA256。缺少校验文件或校验不一致时中止；系统与 CPU 架构不支持时也会退出。
