@@ -77,7 +77,13 @@ Built as an enhanced fork of the original X-UI project, 3X-UI adds broader proto
 
 This is the unofficial **3X-UI Personal Edition v3.11.0** fork. Commercial ads are disabled and panel updates use this repository. Xray-core updates remain independent.
 
-The current Linux AMD64 release is an **upgrade package for an existing official v3.11.0 installation**, not a fresh installer. Follow the guide for downloads, checksums and backups. Upstream installer commands install the upstream edition.
+For a fresh Debian/Ubuntu AMD64 host, run as root:
+
+```bash
+bash <(curl -fsSL https://github.com/nxabc/3x-ui/releases/download/v3.11.0/install.sh) v3.11.0
+```
+
+The installer refuses existing installations. Existing users must back up and use the panel upgrade package instead. The illustrated guide covers script checksums, database, TLS and login credentials.
 
 [Download v3.11.0](https://github.com/nxabc/3x-ui/releases/tag/v3.11.0) · [Backup and rollback](PRIVACY.md)
 

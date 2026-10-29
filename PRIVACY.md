@@ -20,10 +20,25 @@ can supply `XUI_PANEL_GITHUB_TOKEN` through a protected service environment file
 (root only, mode 0600); use a fine-grained contents-read token scoped to this
 repository. Authenticated errors remain errors. Tokens are never compiled into
 the binary or sent to redirects. Package downloads are manual: web/CLI panel
-installers are blocked, including the standalone install/update scripts.
+update paths are blocked. The standalone `install.sh` now supports fresh
+Debian/Ubuntu AMD64 installation only, pinned to the personal v3.11.0 full
+package; it refuses an existing panel/database/environment and requires a
+published checksum. It cannot be used to update a running installation.
 Xray's independent official update path is unchanged.
 
 ## Build and publication
+
+The separate `personal-installer-build.yml` assembles a complete initial-install
+bundle from the verified official v3.11.0 archive and the already released
+personal panel. All original `bin/` files are checked unchanged; the panel
+binary remains byte-for-byte identical to the personal release. Both binary
+and installer source commits are recorded. A real installation is tested on
+a disposable Ubuntu runner (systemd, login HTTP, empty sponsors/404 logos and
+refusal to overwrite), with Debian 13 binary startup checked in a container.
+External domain certificate issuance and full VM acceptance remain separate.
+Publishing these additional assets requires explicitly dispatching `release.yml`
+after this exact commit's full-installer build succeeds. Existing assets are
+never overwritten; the published version/tag stays v3.11.0.
 
 `privacy-build.yml` tests and builds a **panel-only upgrade artifact** on Ubuntu
 24.04 AMD64. It uploads Actions artifacts and cannot publish releases or deploy.

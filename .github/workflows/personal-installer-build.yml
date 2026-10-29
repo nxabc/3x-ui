@@ -1,0 +1,47 @@
+name: Personal Edition full installer
+on:
+  push:
+    branches: [privacy-edition]
+    paths:
+      - install.sh
+      - scripts/personal/**
+      - .github/workflows/personal-installer-build.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package-and-install:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Shell validation
+        run: |
+          bash -n install.sh
+          shellcheck --severity=error install.sh scripts/personal/*.sh
+          ! grep -E 'github(com|usercontent.com)/(MHSanaei|mhsanaei)/3x-ui' install.sh
+      - name: Assemble full package from pinned verified releases
+        run: bash scripts/personal/package.sh
+      - name: Real fresh installation on disposable Ubuntu runner
+        env:
+          XUI_NONINTERACTIVE: '1'
+          XUI_DB_TYPE: sqlite
+          XUI_SSL_MODE: none
+          XUI_ENABLE_FAIL2BAN: 'false'
+          XUI_PANEL_PORT: '2053'
+          XUI_WEB_BASE_PATH: /privacyci/
+          XUI_USERNAME: personal-ci
+          XUI_PASSWORD: ephemeral-ci-password-not-for-deployment
+        run: sudo --preserve-env=XUI_NONINTERACTIVE,XUI_DB_TYPE,XUI_SSL_MODE,XUI_ENABLE_FAIL2BAN,XUI_PANEL_PORT,XUI_WEB_BASE_PATH,XUI_USERNAME,XUI_PASSWORD bash scripts/personal/smoke-install.sh
+      - name: Debian 13 binary compatibility smoke check
+        run: |
+          docker run --rm -v "$PWD/full/x-ui:/payload:ro" debian:13 bash -ec '/payload/x-ui -v | grep 3.11.0; /payload/bin/xray-linux-amd64 version'
+      - uses: actions/upload-artifact@v7
+        with:
+          name: personal-full-installer-v3.11.0
+          path: |
+            x-ui-linux-amd64.tar.gz
+            x-ui-linux-amd64.tar.gz.sha256
+            install.sh
+            install.sh.sha256
+            INSTALLER_SOURCE_COMMIT
+          if-no-files-found: error

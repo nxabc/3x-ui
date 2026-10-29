@@ -77,7 +77,13 @@
 
 本仓库是 **3X-UI 个人版 v3.11.0**，非官方个人维护分支。商业广告已禁用，面板更新渠道独立，Xray 核心更新保持原样。
 
-当前发布的是 **Linux AMD64 升级包**，需要已有官方 v3.11.0 环境。下载、校验、备份和图文步骤请按安装说明操作；请勿执行上游一键命令，否则装到的是官方版本。
+空白 Debian/Ubuntu AMD64 系统使用个人版完整安装包；已有面板使用升级包。先以 root 登录，再执行：
+
+```bash
+bash <(curl -fsSL https://github.com/nxabc/3x-ui/releases/download/v3.11.0/install.sh) v3.11.0
+```
+
+脚本会拒绝覆盖已有面板。下载校验、数据库、证书和登录信息保存步骤见图文指南。
 
 [下载个人版 v3.11.0](https://github.com/nxabc/3x-ui/releases/tag/v3.11.0) · [备份与回滚](PRIVACY.md)
 
