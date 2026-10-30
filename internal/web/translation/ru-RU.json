@@ -2495,9 +2495,12 @@
       "dragToReorder": "Перетащите, чтобы изменить порядок {name}"
     },
     "sponsors": {
+      "supportTitle": "Help open source keep growing",
+      "supportText": "Every improvement takes time and care from maintainers and the community. If 3X-UI helps you, you can voluntarily support its original developer through the official donation page.",
+      "supportNote": "Voluntary donation · Opens the original developer’s website",
       "title": "Спонсоры",
-      "intro": "Компании, поддерживающие разработку 3X-UI. Спонсорские ссылки открываются в новой вкладке.",
-      "become": "Стать спонсором",
+      "intro": "Thank you to the contributors who keep 3X-UI moving forward.",
+      "become": "Support the original developer",
       "tag": "Спонсор",
       "visit": "Перейти"
     }

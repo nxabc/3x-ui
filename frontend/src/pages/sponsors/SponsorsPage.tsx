@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ConfigProvider, Layout, Typography } from 'antd';
-import { CrownOutlined } from '@ant-design/icons';
+import { CrownOutlined, HeartOutlined } from '@ant-design/icons';
 
 import { useTheme } from '@/hooks/useTheme';
 import AppSidebar from '@/layouts/AppSidebar';
@@ -13,7 +13,7 @@ function BecomeButton({ contact, block }: { contact?: string; block?: boolean })
   return (
     <Button
       type="primary"
-      icon={<CrownOutlined aria-hidden />}
+      icon={<HeartOutlined aria-hidden />}
       href={contact}
       target="_blank"
       rel="noopener noreferrer"
@@ -50,10 +50,23 @@ export default function SponsorsPage() {
                   </Typography.Title>
                   <Typography.Text type="secondary">{t('pages.sponsors.intro')}</Typography.Text>
                 </div>
-                <BecomeButton contact="https://donate.sanaei.dev/" />
               </div>
-
-
+              <section className="sponsors-support" aria-labelledby="sponsors-support-title">
+                <span className="sponsors-support-icon">
+                  <HeartOutlined aria-hidden />
+                </span>
+                <span className="sponsors-support-eyebrow">3X-UI · OPEN SOURCE</span>
+                <Typography.Title level={2} id="sponsors-support-title">
+                  {t('pages.sponsors.supportTitle')}
+                </Typography.Title>
+                <Typography.Paragraph className="sponsors-support-text">
+                  {t('pages.sponsors.supportText')}
+                </Typography.Paragraph>
+                <BecomeButton contact="https://donate.sanaei.dev/" />
+                <Typography.Text type="secondary" className="sponsors-support-note">
+                  {t('pages.sponsors.supportNote')}
+                </Typography.Text>
+              </section>
             </div>
           </Layout.Content>
         </Layout>

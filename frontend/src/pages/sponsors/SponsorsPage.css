@@ -29,41 +29,52 @@
   color: #faad14;
 }
 
-.sponsors-yourbrand {
+.sponsors-support {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 40px 24px;
-  border: 1.5px dashed var(--ant-color-border);
-  border-radius: var(--ant-border-radius-lg, 8px);
+  padding: 48px 24px 36px;
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at top, var(--ant-color-primary-bg), transparent 70%),
+    var(--bg-card, var(--ant-color-bg-container));
   text-align: center;
-  background: var(--bg-card, transparent);
 }
 
-.sponsors-yourbrand-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 8px;
-  font-size: 22px;
-  color: var(--ant-color-primary);
+.sponsors-support-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
+  border-radius: 20px;
   background: var(--ant-color-primary-bg);
+  color: var(--ant-color-primary);
+  font-size: 28px;
 }
 
-.sponsors-yourbrand-title {
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--ant-color-text);
-}
-
-.sponsors-yourbrand-text {
-  max-width: 420px;
-  margin-bottom: 4px;
-  font-size: 13px;
+.sponsors-support-eyebrow {
+  margin-bottom: 12px;
   color: var(--ant-color-text-secondary);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+}
+
+.sponsors-support .ant-typography {
+  margin-top: 0;
+}
+.sponsors-support-text {
+  max-width: 520px;
+  color: var(--ant-color-text-secondary);
+  line-height: 1.9;
+}
+.sponsors-support .ant-btn {
+  margin-top: 8px;
+}
+.sponsors-support-note {
+  margin-top: 20px;
+  font-size: 12px;
 }
 
 @media (max-width: 768px) {
