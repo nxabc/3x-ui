@@ -2495,12 +2495,6 @@
       "dragToReorder": "Arraste para reordenar {name}"
     },
     "sponsors": {
-      "supportTitle": "Help open source keep growing",
-      "supportText": "Every improvement takes time and care from maintainers and the community. If 3X-UI helps you, you can voluntarily support its original developer through the official donation page.",
-      "supportNote": "Voluntary donation · Opens the original developer’s website",
-      "title": "Patrocinadores",
-      "intro": "Thank you to the contributors who keep 3X-UI moving forward.",
-      "become": "Support the original developer",
       "tag": "Patrocinador",
       "visit": "Visitar"
     }

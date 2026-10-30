@@ -8,7 +8,7 @@ The archive has no upstream Git history. `archive-v3.11.0` is a local snapshot,
 not proof of equivalence to the upstream signed/tagged release.
 
 Login and dashboard sponsor slots are removed. The sponsor route/menu remain;
-the page contains static content and the official voluntary donation link.
+the page content is intentionally empty. Official voluntary donation links elsewhere are unchanged.
 The sponsor hook performs no request. The compatible backend list returns
 `{"sponsors":[]}`; logo requests return the existing unknown-logo error.
 All sponsor download/cache helpers have been removed so they cannot be reused

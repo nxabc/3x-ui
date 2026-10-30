@@ -2495,12 +2495,6 @@
       "dragToReorder": "拖曳以重新排列 {name}"
     },
     "sponsors": {
-      "supportTitle": "讓開源持續成長",
-      "supportText": "每一次改進，都離不開維護者與社群的投入。如果 3X-UI 對你有幫助，可以透過官方捐贈入口，自願支持原作者繼續開發。",
-      "supportNote": "自願捐贈 · 前往原作者官方網站",
-      "title": "贊助商",
-      "intro": "感謝為 3X-UI 持續投入時間與心力的開源貢獻者。",
-      "become": "支持原作者",
       "tag": "贊助",
       "visit": "造訪"
     }
