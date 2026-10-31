@@ -1,9 +1,9 @@
-name: Privacy Edition build and test
+name: Personal Edition build and test
 on:
   workflow_dispatch:
   pull_request:
   push:
-    branches: [privacy-edition]
+    branches: [personal-edition]
     paths:
       - '**.go'
       - go.mod

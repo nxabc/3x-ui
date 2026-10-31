@@ -1,7 +1,7 @@
 name: Personal Edition full installer
 on:
   push:
-    branches: [privacy-edition]
+    branches: [personal-edition]
     paths:
       - install.sh
       - scripts/personal/**

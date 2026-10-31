@@ -108,7 +108,7 @@ These steps are a plan only: no VPS has been contacted or changed.
 ## Maintaining upstream
 
 `origin` is `https://github.com/nxabc/3x-ui.git`; `upstream` is
-`https://github.com/MHSanaei/3x-ui.git`. Work on `privacy-edition`.
+`https://github.com/MHSanaei/3x-ui.git`. Work on `personal-edition`.
 Fetch upstream tags, verify the supplied archive against actual v3.11.0 before
 claiming an official baseline, then retain/replay the privacy diff on a branch
 based on the verified tag. Do not rewrite a shared branch without agreement.
