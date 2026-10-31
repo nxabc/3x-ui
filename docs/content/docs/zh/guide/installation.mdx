@@ -1,56 +1,73 @@
 ---
 title: 个人版安装指南
-description: Debian 与 Ubuntu AMD64 全新安装、个人版升级及图文操作指南。
+description: 最新八步图文安装流程，包含域名证书、重载设置及登录信息保存。
 icon: Download
 ---
 
 <div align="center">
 
-# 3X-UI 个人版
+# 3X-UI 个人版安装指南
 
-### 从准备环境，到保存第一份登录信息
+### 八步完成安装 · 从系统准备到保存登录信息
 
-**v3.11.0 · Linux AMD64 · 非官方个人维护分支**
+**v3.11.0 · Debian 13 示例 · Linux AMD64**
 
-[下载个人版](https://github.com/nxabc/3x-ui/releases/tag/v3.11.0) · [查看源码](https://github.com/nxabc/3x-ui/tree/privacy-edition) · [备份与回滚](https://github.com/nxabc/3x-ui/blob/privacy-edition/PRIVACY.md)
+[下载个人版](https://github.com/nxabc/3x-ui/releases/tag/v3.11.0) · [项目源码](https://github.com/nxabc/3x-ui/tree/privacy-edition) · [备份与回滚](https://github.com/nxabc/3x-ui/blob/privacy-edition/PRIVACY.md)
 
 </div>
 
 > [!IMPORTANT]
-> **全新安装与已有面板升级请分开操作。** 空白 Debian/Ubuntu AMD64 系统使用下方个人版安装脚本；已有面板的用户先备份，再按 [升级与回滚说明](https://github.com/nxabc/3x-ui/blob/privacy-edition/PRIVACY.md) 操作。全新安装脚本会拒绝覆盖已有安装。
+> 本文用于**空白 Debian / Ubuntu AMD64 系统的全新安装**。已有面板请先备份并使用升级包，不要重复执行初装脚本。以下命令均以 **root** 执行；普通用户先运行 `sudo -i`。
 
-## 开始之前
+## 开始前准备
 
-| 项目     | 本文示例                               |
-| :------- | :------------------------------------- |
-| 操作系统 | Debian 13；Ubuntu 请按实际系统验证     |
-| CPU 架构 | `x86_64` / AMD64，使用 `uname -m` 查看 |
-| 操作权限 | root 或 sudo                           |
-| HTTPS    | 一个已解析到服务器的域名               |
-| 测试环境 | 建议先在虚拟机中创建快照               |
+| 项目       | 要求                                                    |
+| :--------- | :------------------------------------------------------ |
+| 系统       | Debian 13 示例；AMD64 / x86_64                          |
+| 域名       | 自己可管理 DNS 的域名                                   |
+| 证书验证   | 主流程使用 HTTP 验证，公网 TCP 80 需到达服务器          |
+| SSH 与备份 | 保留当前 SSH 连接；空白虚拟机先创建快照，已有业务先备份 |
 
-## 01 · 更新系统
+`panel.example.com` 是**脱敏示例域名，不能直接申请证书**，操作时替换成自己的域名。部分截图中的域名和敏感值经过编辑，不是可登录的地址或账号。
 
-以下系统命令以 **root** 执行；普通用户先运行 `sudo -i`。在新装的测试系统中操作，已有业务的机器请先备份并安排维护时间。
+## 第一步 · 更新系统并安装 curl
+
+### 1. 更新系统
 
 ```bash
-apt update
-apt upgrade -y
+apt update && apt upgrade -y
+```
+
+![第一步：更新系统](/images/personal-install/v2/01-update.jpg)
+
+等当前命令完成、重新出现 `root@…:~#` 后再执行下一条。
+
+### 2. 安装 curl
+
+```bash
 apt install -y curl ca-certificates
 ```
 
-## 02 · 安装 3X-UI 个人版
+![第一步：安装 curl](/images/personal-install/v2/02-curl.jpg)
 
-**空白系统使用这条命令。** 面板和完整安装包都从 **nxabc/3x-ui** 下载，固定为 `v3.11.0`；不会安装官方最新版本。
+_截图中的 `curl: command not found` 用于识别缺少工具的情况；上方历史命令不是本教程的安装入口。先装好 curl，再执行第二步的个人版命令。_
+
+## 第二步 · 安装 3X-UI 个人版
+
+复制下面这一整行，在终端回车执行：
 
 ```bash
 bash <(curl -fsSL https://github.com/nxabc/3x-ui/releases/download/v3.11.0/install.sh) v3.11.0
 ```
 
-> [!NOTE]
-> 请先以 root 登录，或先运行 `sudo -i` 再执行上面的命令。执行安装时始终需要 root 权限。
+![第二步：执行个人版安装命令](/images/personal-install/v2/03-install.jpg)
 
-### 推荐：下载并校验脚本后安装
+程序会下载完整安装包并核对 SHA256。保持网络稳定，耐心等待交互提示；不要反复启动安装或在下载中途切换代理模式。
+
+<details>
+<summary>先下载并校验安装脚本（可选）</summary>
+
+逐条执行：
 
 ```bash
 mkdir -p ~/3x-ui-personal && cd ~/3x-ui-personal
@@ -59,101 +76,118 @@ curl -fLO https://github.com/nxabc/3x-ui/releases/download/v3.11.0/install.sh.sh
 sha256sum -c install.sh.sha256 && bash install.sh v3.11.0
 ```
 
-安装程序会再次核对完整发布包的 SHA256。缺少校验文件或校验不一致时中止；系统与 CPU 架构不支持时也会退出。
+</details>
 
-### 已装官方 v3.11.0？使用升级包
+## 第三步 · 选择数据库
 
-从 [发布页](https://github.com/nxabc/3x-ui/releases/tag/v3.11.0) 下载 `privacy-panel-linux-amd64.tar.gz` 及其 `.sha256` 文件。按包内 `PRIVACY.md` 备份数据库、证书、配置和旧二进制，再替换面板及配套 CLI。**升级时不要执行全新安装脚本。**
+个人自用一般输入 **`1`** 并回车，选择 SQLite。需要 PostgreSQL 的用户按自己的部署方案选择；不要对已有数据库随意切换类型。
 
-## 03 · 选择数据库
+![第三步：输入 1，选择 SQLite](/images/personal-install/v2/04-database.jpg)
 
-基础安装程序出现数据库选项时，个人自用通常选择 **`1` → SQLite**。
-如果有多节点或 PostgreSQL 的明确需求，再选择对应方案；不要对已有数据库随意切换类型。
+## 第四步 · 选择自定义端口
 
-![数据库选择：输入 1，使用 SQLite](/images/personal-install/database.jpg)
+出现 `Would you like to customize the Panel Port settings?` 时输入 **`y`** 并回车。`y` 是自己设置端口，`n` 是使用程序分配的随机端口。
 
-_输入 `1` 并回车。截图为旧版操作示意，文案可能随版本变化。_
+![第四步：输入 y，自定义端口](/images/personal-install/v2/05-custom-port.jpg)
 
-## 04 · 设置面板端口
+## 第五步 · 输入面板登录端口
 
-出现自定义面板端口提示时，输入 **`Y`**，然后填写准备使用的端口。
-例如 `12345`，仅作为演示；实际端口应未被其他服务占用。
+填写未被占用的端口，例如 **`12345`**，然后回车。后续访问面板时要带上实际设置的端口。
 
-![选择自定义面板端口](/images/personal-install/panel-port.jpg)
+![第五步：填写面板端口](/images/personal-install/v2/06-panel-port.jpg)
 
-_先选 `Y`，再根据后续提示填写端口。选择 `N` 则使用程序分配的随机端口。_
+## 第六步 · 安装并绑定域名证书
 
-## 05 · 配置 HTTPS
+### 1. 选择域名证书
 
-### 选择域名证书
+输入 **`1`** 并回车，选择 `Let's Encrypt for Domain`。
 
-使用域名申请证书时，选择 **`1` → Let's Encrypt for Domain**。
-先确认域名解析正确；若配置了 AAAA 记录，也要确认 IPv6 指向正确。
+![第六步之一：选择域名证书](/images/personal-install/v2/07-tls-method.jpg)
 
-![选择域名证书方式](/images/personal-install/tls-method.jpg)
+### 2. 输入自己的域名
 
-### 输入域名与验证端口
+等待 acme.sh 安装完成，在 `Please enter your domain name:` 后填写自己的域名。
 
-按提示输入自己的域名，例如 `panel.example.com`。
-HTTP 验证端口使用 **`80`**，并确保公网 TCP 80 能到达验证服务。
-域名、面板端口、证书验证端口是不同的配置项。
+![第六步之二：填写域名](/images/personal-install/v2/08-domain.jpg)
 
-![证书验证使用端口 80](/images/personal-install/tls-port.jpg)
+> [!NOTE]
+> 新服务器使用本流程前，先将域名解析到服务器公网地址，确保 HTTP 验证可达；有 AAAA 记录时也要确认 IPv6 指向正确。只有局域网 IP 的虚拟机不能直接照搬公网 HTTP 验证，需要另外使用 DNS 验证或导入已有证书。
 
-_这里的 `80` 用于证书验证，不会把前一步设置的面板端口改成 80。_
+### 3. 填写证书验证端口
 
-> [!WARNING]
-> 看到 `Extraction error`、`Install error` 或证书申请失败时，先解决错误，不要仅凭后面的提示判断安装成功。未取得有效证书时，不要把明文 HTTP 面板直接暴露在公网。
+输入 **`80`** 并回车。这里是证书 HTTP 验证端口，不是第五步的面板端口。
 
-## 06 · 检查安装结果
+![第六步之三：填写验证端口 80](/images/personal-install/v2/09-tls-port.png)
 
-安装程序提示完成后，再检查实际服务状态：
+### 4. 保留默认重载命令
 
-```bash
-x-ui status
-systemctl status x-ui --no-pager
+出现 `Would you like to modify --reloadcmd for ACME? (y/n):` 时，输入 **`n`** 并回车。
+
+![第六步之四：输入 n](/images/personal-install/v2/10-reload.png)
+
+默认命令会在证书更新后尝试重启面板，使其加载新证书。**配置了重载命令，不代表所有验证方式都能自动续期**；手动 TXT 验证仍需人工处理。
+
+### 5. 将证书绑定到面板
+
+出现 `Would you like to set this certificate for the panel? (y/n):` 时，输入 **`y`** 并回车。
+
+![第六步之五：输入 y，绑定证书](/images/personal-install/v2/11-bind.png)
+
+> [!NOTE]
+> 截图来自本地演示，复用了提前申请的证书，所以会显示 `Existing certificate found`。首次安装尚未创建服务时，重载也可能显示 `Unit x-ui.service not found`。请检查第七步的最终服务状态；其他证书申请错误应先排查，不要忽略。
+
+## 第七步 · 确认安装完成
+
+出现以下提示，表示安装程序已执行到最后：
+
+```text
+x-ui v3.11.0 installation finished, it is running now...
 ```
 
-![安装完成与管理命令](/images/personal-install/completed.jpg)
+![第七步：安装完成](/images/personal-install/v2/12-complete.jpg)
 
-_截图显示旧版 `v3.2.8`，只用于说明完成提示和管理入口；本项目发布版本为 `v3.11.0`。_
+再单独执行以下命令，确认实际服务状态：
 
-## 07 · 保存登录信息
+```bash
+systemctl is-active x-ui
+```
 
-把以下信息保存到密码管理器，首次登录后确认 HTTPS 正常，并启用双因素认证。
+输出 **`active`** 表示服务正在运行。否则先查看日志：
 
-| 需要保存       | 说明                           |
-| :------------- | :----------------------------- |
-| 完整面板地址   | 包含协议、域名、端口和访问路径 |
-| 用户名与密码   | 以本次安装输出为准             |
-| 双因素恢复信息 | 按实际配置安全保存             |
+```bash
+journalctl -u x-ui -n 80 --no-pager
+```
 
-![保存面板登录信息，截图中的凭据已遮挡](/images/personal-install/save-login.jpg)
+## 第八步 · 向上翻找并保存登录信息
 
-_不要把真实密码、完整访问路径或双因素密钥发到公开 Issue、截图或聊天群。_
+向上滚动终端，找到 **`Panel Installation Complete!`** 区域，保存本次生成的配置信息。
 
-## 端口放行 · 按实际环境检查
+![第八步：保存信息，敏感值均已隐藏](/images/personal-install/v2/13-save-login.png)
 
-**不要按 VPS 商家名称判断是否存在防火墙。** 同时检查云平台安全组和系统内的 nftables、UFW 或 iptables 规则，保留 SSH 连接和回滚通道。
+| 字段                | 保存内容                            |
+| :------------------ | :---------------------------------- |
+| Username / Password | 本次生成的用户名与密码              |
+| Port                | 实际面板登录端口                    |
+| WebBasePath         | 随机访问路径                        |
+| Access URL          | 完整 HTTPS 地址，包含端口和访问路径 |
+| API Token           | 访问凭据，按密码同等保护，不要公开  |
 
-| 用途             | 需要检查的端口                          |
-| :--------------- | :-------------------------------------- |
-| SSH 管理         | 你实际使用的 SSH 端口                   |
-| 面板登录         | 你选择的面板 TCP 端口                   |
-| HTTP 证书验证    | TCP 80，按所选验证方式配置              |
-| HTTPS / 反向代理 | 使用时检查 TCP 443                      |
-| 节点服务         | 以入站协议实际使用的 TCP / UDP 端口为准 |
+建议保存到密码管理器，按本次输出的完整 Access URL 登录。首次登录后检查 HTTPS 和账号安全设置，按需要启用双因素认证。截图中的 `[REDACTED]` 是脱敏占位，不能用于登录。
 
-不要混用防火墙管理工具，也不要直接清空现有规则。先识别当前防火墙，再按对应工具添加规则并验证。
+## 放行端口 · 按实际环境检查
 
-## 常见问题 · 证书工具下载失败
+不要根据 VPS 服务商名称跳过防火墙检查。云平台安全组和系统内的 nftables、UFW、iptables 都可能限制连接。
 
-下面这张素材实际展示了 `acme.sh` 下载解压失败，并不是成功示例：
+| 用途             | 需要检查                              |
+| :--------------- | :------------------------------------ |
+| SSH              | 实际 SSH TCP 端口，避免把自己锁在外面 |
+| 证书验证         | 公网 TCP 80 到达验证服务              |
+| 面板             | 本文示例 TCP 12345，按实际设置替换    |
+| HTTPS / 反向代理 | 使用时检查 TCP 443                    |
+| 节点             | 根据协议检查实际 TCP / UDP 端口       |
 
-![故障示例：acme.sh 下载后解压失败](/images/personal-install/tls-download-error.jpg)
-
-先检查服务器的 DNS、GitHub 连通性，以及下载文件是否确实为压缩包。确认工具安装成功后再继续申请证书；请保留报错日志并遮挡凭据后排查。
+先识别当前防火墙，再使用对应工具添加规则。不要清空规则，也不要混用工具。`iptables-persistent` 仅适用于已明确采用该方案的机器，不是每台 Debian 都要安装。
 
 ---
 
-**个人版的更新约定：** 面板使用自己的 GitHub 发布渠道；Xray 核心继续使用原有独立更新入口。面板升级前始终备份数据库、证书、配置和旧二进制，具体步骤见 [备份与回滚](https://github.com/nxabc/3x-ui/blob/privacy-edition/PRIVACY.md)。
+**更新约定：** 面板使用个人版发布渠道，Xray 核心保留原有独立更新功能。面板更新前请备份数据库、证书、配置、旧二进制和配套 CLI，参见 [备份与回滚](https://github.com/nxabc/3x-ui/blob/privacy-edition/PRIVACY.md)。
