@@ -11,23 +11,77 @@ jobs:
       contents: write
       actions: read
     steps:
-      - name: Publish only the successful full-installer build for this commit
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Select tested blank-page panel artifact
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          EXPECTED_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
-          runs=$(gh api --method GET repos/$GH_REPO/actions/workflows/personal-installer-build.yml/runs -f branch=privacy-edition -f status=success -f per_page=10)
-          run=$(jq -r --arg sha "$EXPECTED_SHA" '.workflow_runs[] | select(.head_sha == $sha) | .id' <<< "$runs" | head -n1)
-          test -n "$run"
-          gh run download "$run" -n personal-full-installer-v3.11.0 -D release-files
-          cd release-files
+          run=41120158044
+          test "$(gh api repos/$GH_REPO/actions/runs/$run --jq .conclusion)" = success
+          source=$(gh api repos/$GH_REPO/actions/runs/$run --jq .head_sha)
+          git diff --exit-code "$source" HEAD -- frontend internal go.mod go.sum main.go
+          gh run download "$run" -n privacy-panel-linux-amd64 -D tested-panel
+          (cd tested-panel && sha256sum -c privacy-panel-linux-amd64.tar.gz.sha256)
+          node scripts/privacy/check.mjs
+          grep -q '<Layout.Content className="content-area" />' frontend/src/pages/sponsors/SponsorsPage.tsx
+      - name: Assemble full package using the tested panel
+        env:
+          PERSONAL_PANEL_ARCHIVE: ${{ github.workspace }}/tested-panel/privacy-panel-linux-amd64.tar.gz
+        run: |
+          bash -n install.sh
+          shellcheck --severity=error install.sh scripts/personal/*.sh
+          bash scripts/personal/package.sh
+      - name: Fresh Ubuntu installation and HTTP checks
+        env:
+          XUI_NONINTERACTIVE: '1'
+          XUI_DB_TYPE: sqlite
+          XUI_SSL_MODE: none
+          XUI_ENABLE_FAIL2BAN: 'false'
+          XUI_PANEL_PORT: '2053'
+          XUI_WEB_BASE_PATH: /privacyci/
+          XUI_USERNAME: personal-ci
+          XUI_PASSWORD: ephemeral-ci-password-not-for-deployment
+        run: sudo --preserve-env=XUI_NONINTERACTIVE,XUI_DB_TYPE,XUI_SSL_MODE,XUI_ENABLE_FAIL2BAN,XUI_PANEL_PORT,XUI_WEB_BASE_PATH,XUI_USERNAME,XUI_PASSWORD bash scripts/personal/smoke-install.sh
+      - name: Debian 13 binary compatibility
+        run: docker run --rm -v "$PWD/full/x-ui:/payload:ro" debian:13 bash -ec '/payload/x-ui -v | grep 3.11.0; /payload/bin/xray-linux-amd64 version'
+      - name: Back up old release attachments and source tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir previous-release
+          gh release view v3.11.0 --json name,body,tagName,isPrerelease > previous-release/release.json
+          gh release download v3.11.0 -D previous-release
+          git rev-parse refs/tags/v3.11.0 > previous-release/TAG_COMMIT
+          archive="personal-v3.11.0-before-$GITHUB_RUN_ID"
+          git tag "$archive" "$(cat previous-release/TAG_COMMIT)"
+          git push origin "refs/tags/$archive"
+          tar -czf "rollback-v3.11.0-$GITHUB_RUN_ID.tar.gz" -C previous-release .
+          gh release upload v3.11.0 "rollback-v3.11.0-$GITHUB_RUN_ID.tar.gz"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: previous-v3.11.0-assets
+          path: previous-release/
+      - name: Replace v3.11.0 attachments after validation
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
           sha256sum -c x-ui-linux-amd64.tar.gz.sha256
           sha256sum -c install.sh.sha256
-          test "$(cat INSTALLER_SOURCE_COMMIT)" = "$EXPECTED_SHA"
-          # No --clobber: existing published binaries are never replaced.
-          gh release upload v3.11.0 x-ui-linux-amd64.tar.gz x-ui-linux-amd64.tar.gz.sha256 install.sh install.sh.sha256 INSTALLER_SOURCE_COMMIT
+          old=$(cat previous-release/TAG_COMMIT)
+          release=$(gh api repos/$GH_REPO/releases/tags/v3.11.0 --jq .id)
+          gh api --method PATCH repos/$GH_REPO/releases/$release -F draft=true > /dev/null
+          gh release upload v3.11.0 tested-panel/privacy-panel-linux-amd64.tar.gz tested-panel/privacy-panel-linux-amd64.tar.gz.sha256 x-ui-linux-amd64.tar.gz x-ui-linux-amd64.tar.gz.sha256 install.sh install.sh.sha256 INSTALLER_SOURCE_COMMIT --clobber
+          git push --force-with-lease="refs/tags/v3.11.0:$old" origin HEAD:refs/tags/v3.11.0
+          gh api --method PATCH repos/$GH_REPO/releases/$release -F draft=false -F prerelease=true -f target_commitish="$GITHUB_SHA" > /dev/null
+
   build:
     if: github.repository != 'nxabc/3x-ui'
     permissions:

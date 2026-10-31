@@ -7,8 +7,13 @@ personal=https://github.com/nxabc/3x-ui/releases/download/v3.11.0
 fetch "$upstream/x-ui-linux-amd64.tar.gz" inputs/x-ui-linux-amd64.tar.gz
 fetch "$upstream/x-ui-linux-amd64.tar.gz.sha256" inputs/x-ui-linux-amd64.tar.gz.sha256
 (cd inputs && sha256sum -c x-ui-linux-amd64.tar.gz.sha256)
-fetch "$personal/privacy-panel-linux-amd64.tar.gz" inputs/privacy-panel-linux-amd64.tar.gz
-fetch "$personal/privacy-panel-linux-amd64.tar.gz.sha256" inputs/privacy-panel-linux-amd64.tar.gz.sha256
+if [[ -n "${PERSONAL_PANEL_ARCHIVE:-}" ]]; then
+    cp "$PERSONAL_PANEL_ARCHIVE" inputs/privacy-panel-linux-amd64.tar.gz
+    cp "$PERSONAL_PANEL_ARCHIVE.sha256" inputs/privacy-panel-linux-amd64.tar.gz.sha256
+else
+    fetch "$personal/privacy-panel-linux-amd64.tar.gz" inputs/privacy-panel-linux-amd64.tar.gz
+    fetch "$personal/privacy-panel-linux-amd64.tar.gz.sha256" inputs/privacy-panel-linux-amd64.tar.gz.sha256
+fi
 (cd inputs && sha256sum -c privacy-panel-linux-amd64.tar.gz.sha256)
 tar -xzf inputs/x-ui-linux-amd64.tar.gz -C full
 tar -xzf inputs/privacy-panel-linux-amd64.tar.gz -C overlay
