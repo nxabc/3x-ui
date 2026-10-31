@@ -58,9 +58,7 @@ jobs:
           gh release view v3.11.0 --json name,body,tagName,isPrerelease > previous-release/release.json
           gh release download v3.11.0 -D previous-release
           git rev-parse refs/tags/v3.11.0 > previous-release/TAG_COMMIT
-          archive="personal-v3.11.0-before-$GITHUB_RUN_ID"
-          git tag "$archive" "$(cat previous-release/TAG_COMMIT)"
-          git push origin "refs/tags/$archive"
+          # The release operator archives the tag with existing Git credentials.
           tar -czf "rollback-v3.11.0-$GITHUB_RUN_ID.tar.gz" -C previous-release .
           gh release upload v3.11.0 "rollback-v3.11.0-$GITHUB_RUN_ID.tar.gz"
       - uses: actions/upload-artifact@v7
@@ -75,11 +73,10 @@ jobs:
           set -euo pipefail
           sha256sum -c x-ui-linux-amd64.tar.gz.sha256
           sha256sum -c install.sh.sha256
-          old=$(cat previous-release/TAG_COMMIT)
           release=$(gh api repos/$GH_REPO/releases/tags/v3.11.0 --jq .id)
           gh api --method PATCH repos/$GH_REPO/releases/$release -F draft=true > /dev/null
           gh release upload v3.11.0 tested-panel/privacy-panel-linux-amd64.tar.gz tested-panel/privacy-panel-linux-amd64.tar.gz.sha256 x-ui-linux-amd64.tar.gz x-ui-linux-amd64.tar.gz.sha256 install.sh install.sh.sha256 INSTALLER_SOURCE_COMMIT --clobber
-          git push --force-with-lease="refs/tags/v3.11.0:$old" origin HEAD:refs/tags/v3.11.0
+          # The release operator updates the source tag after successful upload.
           gh api --method PATCH repos/$GH_REPO/releases/$release -F draft=false -F prerelease=true -f target_commitish="$GITHUB_SHA" > /dev/null
 
   build:
